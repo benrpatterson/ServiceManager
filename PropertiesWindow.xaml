@@ -1,0 +1,164 @@
+<Window x:Class="ServiceManager.PropertiesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Height="560" Width="500" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="0,3" />
+            <Setter Property="Padding" Value="2" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="0,3" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="10,3" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+        </Style>
+    </Window.Resources>
+    <DockPanel Margin="10">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="OK" Width="80" IsDefault="True" Click="Ok_Click" />
+            <Button Content="Cancel" Width="80" IsCancel="True" />
+            <Button x:Name="ApplyButton" Content="Apply" Width="80" Click="Apply_Click" IsEnabled="False" Margin="0" />
+        </StackPanel>
+
+        <TabControl x:Name="Tabs">
+            <TabItem Header="General">
+                <Grid Margin="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="90" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Service name:" />
+                    <TextBox x:Name="NameBox" Grid.Row="0" Grid.Column="1" IsReadOnly="True" Background="Transparent" BorderThickness="0" />
+
+                    <TextBlock Grid.Row="1" Text="Display name:" />
+                    <TextBox x:Name="DisplayBox" Grid.Row="1" Grid.Column="1" TextChanged="Changed" />
+
+                    <TextBlock Grid.Row="2" Text="Description:" VerticalAlignment="Top" Margin="0,6,0,0" />
+                    <TextBox x:Name="DescriptionBox" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextChanged="Changed" />
+
+                    <TextBlock Grid.Row="3" Text="Path to executable:" />
+                    <TextBox x:Name="PathBox" Grid.Row="3" Grid.Column="1" IsReadOnly="True" />
+
+                    <TextBlock Grid.Row="4" Text="Startup type:" />
+                    <ComboBox x:Name="StartTypeBox" Grid.Row="4" Grid.Column="1" SelectionChanged="Changed" />
+
+                    <TextBlock Grid.Row="5" Text="Service status:" Margin="0,10,0,0" />
+                    <TextBlock x:Name="StatusLabel" Grid.Row="5" Grid.Column="1" Margin="0,10,0,0" FontWeight="SemiBold" />
+
+                    <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="0,8">
+                        <Button x:Name="StartBtn" Content="Start" Click="Start_Click" />
+                        <Button x:Name="StopBtn" Content="Stop" Click="Stop_Click" />
+                        <Button x:Name="PauseBtn" Content="Pause" Click="Pause_Click" />
+                        <Button x:Name="ResumeBtn" Content="Resume" Click="Resume_Click" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="7" Text="Start parameters:" />
+                    <TextBox x:Name="ParamsBox" Grid.Row="7" Grid.Column="1" ToolTip="Used only when you press Start here. Separate with spaces." />
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Log On">
+                <StackPanel Margin="12">
+                    <TextBlock Text="Log on as:" FontWeight="SemiBold" Margin="0,0,0,6" />
+                    <RadioButton x:Name="LocalSystemRadio" Content="Local System account" Checked="Changed" Margin="0,2" />
+                    <CheckBox x:Name="InteractBox" Content="Allow service to interact with desktop" Margin="22,2,0,6" Checked="Changed" Unchecked="Changed" />
+                    <RadioButton x:Name="AccountRadio" Content="This account:" Checked="Changed" Margin="0,2" />
+                    <Grid Margin="22,4,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Account:" />
+                        <TextBox x:Name="AccountBox" Grid.Column="1" TextChanged="Changed" ToolTip="e.g. DOMAIN\user, .\user, NT AUTHORITY\NetworkService" />
+                        <TextBlock Grid.Row="1" Text="Password:" />
+                        <PasswordBox x:Name="PasswordBox" Grid.Row="1" Grid.Column="1" Margin="0,3" Padding="2" PasswordChanged="Changed" />
+                        <TextBlock Grid.Row="2" Text="Confirm password:" />
+                        <PasswordBox x:Name="ConfirmBox" Grid.Row="2" Grid.Column="1" Margin="0,3" Padding="2" PasswordChanged="Changed" />
+                    </Grid>
+                    <TextBlock Text="Leave the password blank for built-in accounts such as Local Service and Network Service." TextWrapping="Wrap" Margin="22,10,0,0" Foreground="Gray" />
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Recovery">
+                <StackPanel Margin="12">
+                    <TextBlock Text="Select the computer's response if this service fails." Margin="0,0,0,8" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="First failure:" />
+                        <ComboBox x:Name="First" Grid.Column="1" SelectionChanged="Recovery_Changed" />
+                        <TextBlock Grid.Row="1" Text="Second failure:" />
+                        <ComboBox x:Name="Second" Grid.Row="1" Grid.Column="1" SelectionChanged="Recovery_Changed" />
+                        <TextBlock Grid.Row="2" Text="Subsequent failures:" />
+                        <ComboBox x:Name="Third" Grid.Row="2" Grid.Column="1" SelectionChanged="Recovery_Changed" />
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <TextBlock Text="Reset fail count after" />
+                        <TextBox x:Name="ResetDays" Width="50" Margin="6,0" TextChanged="Changed" />
+                        <TextBlock Text="days" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="Restart service after" />
+                        <TextBox x:Name="RestartMinutes" Width="50" Margin="6,0" TextChanged="Changed" />
+                        <TextBlock Text="minutes" />
+                    </StackPanel>
+                    <GroupBox x:Name="RunBox" Header="Run program" Margin="0,12,0,0" Padding="8">
+                        <StackPanel>
+                            <TextBlock Text="Program and command line parameters:" />
+                            <TextBox x:Name="CommandBox" TextChanged="Changed" />
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox x:Name="RebootBox" Header="Restart computer options" Margin="0,8,0,0" Padding="8">
+                        <StackPanel>
+                            <TextBlock Text="Message sent to users before the restart:" />
+                            <TextBox x:Name="RebootMsgBox" TextChanged="Changed" />
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Dependencies">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="This service depends on the following system components:" Margin="0,0,0,4" />
+                    <ListBox x:Name="DependsOnList" Grid.Row="1" />
+                    <TextBlock Grid.Row="2" Text="The following system components depend on this service:" Margin="0,10,0,4" />
+                    <ListBox x:Name="DependentsList" Grid.Row="3" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
