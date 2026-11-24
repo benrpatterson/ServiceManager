@@ -272,7 +272,9 @@ public partial class PropertiesWindow : Window
 
     private async Task Run(Action action)
     {
-        IsEnabled = false;
+        var progress = new ProgressWindow(this, "Updating " + _row.DisplayName, 1);
+        progress.Show();
+        string? error = null;
         try
         {
             await Task.Run(action);
@@ -280,11 +282,15 @@ public partial class PropertiesWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, (ex.InnerException ?? ex).Message, "Service Manager", MessageBoxButton.OK, MessageBoxImage.Warning);
+            error = (ex.InnerException ?? ex).Message;
         }
         finally
         {
-            IsEnabled = true;
+            progress.Finish();
+        }
+        if (error != null)
+        {
+            MessageBox.Show(this, error, "Service Manager", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
         await UpdateStatusAsync();
     }

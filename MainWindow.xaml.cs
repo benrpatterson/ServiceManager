@@ -287,28 +287,32 @@ public partial class MainWindow : Window
             return;
         }
         StatusText.Text = $"{verb} {targets.Count} service(s)...";
-        IsEnabled = false;
+        var progress = new ProgressWindow(this, $"{verb} {(targets.Count == 1 ? targets[0].DisplayName : targets.Count + " services")}", targets.Count);
+        progress.Show();
         var errors = new List<string>();
         try
         {
             var results = await Task.WhenAll(targets.Select(async t =>
             {
+                var label = $"{ServiceOps.Display(t.Server)}\\{t.Name}";
+                string? error = null;
                 try
                 {
                     await Task.Run(() => op(t));
-                    return (string?)null;
                 }
                 catch (Exception ex)
                 {
-                    return $"{ServiceOps.Display(t.Server)}\\{t.Name}: {Describe(ex)}";
+                    error = $"{label}: {Describe(ex)}";
                 }
+                progress.Report(error ?? label, error == null);
+                return error;
             }));
             errors.AddRange(results.OfType<string>());
             await RefreshServersAsync(targets.Select(t => t.Server).Distinct().ToList());
         }
         finally
         {
-            IsEnabled = true;
+            progress.Finish();
         }
         if (errors.Count > 0)
         {
